@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>曲水流觞 · 古风酒局</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Liu+Jian+Mao+Cao&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'ZCOOL XiaoWei', 'Ma Shan Zheng', 'Liu Jian Mao Cao', serif;
+      background-color: #f5e6c8;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(210, 180, 140, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(180, 150, 100, 0.2) 0%, transparent 50%);
+      min-height: 100vh;
+      color: #3c2415;
+      overflow-x: hidden;
+    }
+
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .setup-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .title-block {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .title-block::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      background: #c0392b;
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+
+    .game-title {
+      font-family: 'Liu Jian Mao Cao', cursive;
+      font-size: 4rem;
+      color: #3c2415;
+      letter-spacing: 0.3em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.1rem;
+      color: #8b6914;
+      letter-spacing: 0.5em;
+    }
+
+    .setup-card {
+      background: linear-gradient(135deg, #faf0e6, #f5e6c8);
+      border: 2px solid #c9a96e;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .setup-card::before {
+      content: '◆';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #c0392b;
+      font-size: 1.2rem;
+    }
+
+    .setup-card h2 {
+      font-family: 'Ma Shan Zheng', cursive;
+      text-align: center;
+      font-size: 1.5rem;
+      color: #5c3a21;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.2em;
+    }
+
+    .player-input-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .player-input-row input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border: 2px solid #c9a96e;
+      border-radius: 8px;
+      background: #fffbf5;
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 1rem;
+      color: #3c2415;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .player-input-row input:focus {
+      border-color: #c0392b;
+    }
+
+    .player-input-row input::placeholder {
+      color: #b8a07e;
+    }
+
+    .btn-add {
+      padding: 0.7rem 1.2rem;
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover {
+      background: #a93226;
+    }
+
+    .player-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      min-height: 2.5rem;
+    }
+
+    .player-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.4rem 0.8rem;
+      background: #fffbf5;
+      border: 1px solid #c9a96e;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #5c3a21;
+    }
+
+    .remove-btn {
+      cursor: pointer;
+      color: #c0392b;
+      font-weight: bold;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .remove-btn:hover {
+      color: #a93226;
+    }
+
+    .setup-actions {
+      text-align: center;
+    }
+
+    .btn-start {
+      padding: 0.8rem 3rem;
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 0.3em;
+      cursor: pointer;
+      transition: background 0.3s, opacity 0.3s;
+    }
+
+    .btn-start:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-start:not(:disabled):hover {
+      background: #a93226;
+    }
+
+    .game-screen {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #faf0e6, #f0ddc0);
+      border: 1px solid #c9a96e;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .round-info {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: #8b6914;
+      background: #fffbf5;
+      padding: 0.2rem 1rem;
+      border-radius: 12px;
+      border: 1px solid #c9a96e;
+    }
+
+    .player-indicator {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 1rem;
+      color: #5c3a21;
+    }
+
+    .player-indicator strong {
+      color: #c0392b;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.1rem;
+    }
+
+    .card-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .phase-label {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.2rem;
+      color: #8b6914;
+      letter-spacing: 0.2em;
+      text-align: center;
+    }
+
+    .card-back {
+      width: 220px;
+      height: 300px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-back:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-back:active {
+      transform: translateY(0);
+    }
+
+    .gong-back {
+      background: linear-gradient(145deg, #c0392b, #e74c3c);
+      border: 3px solid #a93226;
+    }
+
+    .chou-back {
+      background: linear-gradient(145deg, #2c3e50, #34495e);
+      border: 3px solid #1a252f;
+    }
+
+    .card-back-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 9px;
+    }
+
+    .card-char {
+      font-family: 'Liu Jian Mao Cao', cursive;
+      font-size: 5rem;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-sub {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 0.5rem;
+      letter-spacing: 0.1em;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 2rem;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.05;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 30px,
+          rgba(0, 0, 0, 0.05) 30px,
+          rgba(0, 0, 0, 0.05) 31px
+        );
+      pointer-events: none;
+    }
+
+    .gong-card {
+      background: linear-gradient(135deg, #fffbf5, #faf0e6);
+      border: 2px solid #c9a96e;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .chou-card {
+      background: linear-gradient(135deg, #fffbf5, #f0e6d6);
+      border: 2px solid #c9a96e;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-seal {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      border: 2px solid #c0392b;
+      color: #c0392b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Liu Jian Mao Cao', cursive;
+      font-size: 1.5rem;
+      transform: rotate(15deg);
+      border-radius: 4px;
+    }
+
+    .gong-title {
+      font-family: 'Liu Jian Mao Cao', cursive;
+      font-size: 2.8rem;
+      color: #3c2415;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .gong-poem {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.2rem;
+      color: #5c3a21;
+      text-align: center;
+      line-height: 1.8;
+      padding: 1rem;
+      background: rgba(201, 169, 110, 0.1);
+      border-radius: 8px;
+      border-left: 3px solid #c9a96e;
+      margin-bottom: 1rem;
+    }
+
+    .gong-annotation {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 1rem;
+      color: #7a5a3a;
+      text-align: center;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      background: rgba(192, 57, 43, 0.05);
+      border-radius: 6px;
+    }
+
+    .gong-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .tag {
+      padding: 0.2rem 0.7rem;
+      background: #c0392b;
+      color: #fffbf5;
+      border-radius: 12px;
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    .gong-source {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 0.8rem;
+      color: #b8a07e;
+      text-align: right;
+      font-style: italic;
+    }
+
+    .vote-prompt {
+      text-align: center;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.2rem;
+      color: #8b6914;
+      padding: 0.8rem 1.5rem;
+      background: rgba(201, 169, 110, 0.15);
+      border-radius: 8px;
+      border: 1px dashed #c9a96e;
+    }
+
+    .chou-type {
+      text-align: center;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: #8b6914;
+      margin-bottom: 0.5rem;
+    }
+
+    .chou-title {
+      font-family: 'Liu Jian Mao Cao', cursive;
+      font-size: 2.5rem;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+
+    .chou-instruction {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.3rem;
+      color: #3c2415;
+      text-align: center;
+      line-height: 1.6;
+      padding: 1rem;
+      background: rgba(44, 62, 80, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid #2c3e50;
+    }
+
+    .chou-execution-hint {
+      text-align: center;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: #c0392b;
+      padding: 0.5rem 1rem;
+    }
+
+    .game-footer {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem 0;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 0.8rem 2.5rem;
+      background: #c0392b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #a93226;
+      transform: translateY(-2px);
+    }
+
+    .btn-text {
+      padding: 0.5rem 1.5rem;
+      background: transparent;
+      color: #8b6914;
+      border: 1px solid #c9a96e;
+      border-radius: 8px;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .btn-text:hover {
+      background: #c9a96e;
+      color: #fff;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 1rem;
+    }
+
+    .overlay-content {
+      background: linear-gradient(135deg, #faf0e6, #f5e6c8);
+      border: 2px solid #c9a96e;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 450px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .overlay-content h2 {
+      font-family: 'Ma Shan Zheng', cursive;
+      text-align: center;
+      font-size: 1.5rem;
+      color: #5c3a21;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.2em;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .history-item {
+      padding: 0.8rem;
+      background: #fffbf5;
+      border: 1px solid #c9a96e;
+      border-radius: 8px;
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: 0.9rem;
+      color: #5c3a21;
+    }
+
+    .history-round {
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1rem;
+      color: #c0392b;
+      margin-bottom: 0.3rem;
+    }
+
+    .history-drawer, .history-gong, .history-chou {
+      padding: 0.1rem 0;
+    }
+
+    .empty-history {
+      text-align: center;
+      color: #b8a07e;
+      font-family: 'Ma Shan Zheng', cursive;
+      font-size: 1.1rem;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card, .card-back, .vote-prompt, .chou-execution-hint {
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    @media (max-width: 480px) {
+      .game-title { font-size: 3rem; }
+      .gong-title { font-size: 2.2rem; }
+      .chou-title { font-size: 2rem; }
+      .card-back { width: 180px; height: 260px; }
+      .game-header { flex-direction: column; gap: 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const state = {
+      screen: 'gong-draw',
+      currentGong: null,
+      currentChou: null,
+      history: [],
+      usedGongIds: [],
+      usedChouIds: []
+    };
+
+    const gongData = [
+      { id: 1, title: '白马少年', poem: '宗之潇洒美少年，举觞白眼望青天，皎如玉树临风前', annotation: '潇洒不羁的年轻帅哥，意气风发，白衣飘飘', tags: ['白衣', '潇洒', '少年感', '玉树临风', '意气风发'], source: '杜甫《饮中八仙歌》' },
+      { id: 2, title: '玉面书生', poem: '腹有诗书气自华', annotation: '温文尔雅、满腹经纶的文化人，气质儒雅', tags: ['青衫', '儒雅', '书卷气', '温润', '斯文'], source: '苏轼《和董传留别》' },
+      { id: 3, title: '风流才子', poem: '才子词人，自是白衣卿相', annotation: '恃才傲物、风流倜傥的文艺青年，浪漫多情', tags: ['白衣', '潇洒', '风流', '文艺', '浪漫'], source: '柳永《鹤冲天》' },
+      { id: 4, title: '少年游侠', poem: '新丰美酒斗十千，咸阳游侠多少年', annotation: '血气方刚、豪爽仗义的年轻人，爱交朋友', tags: ['劲装', '豪迈', '少年感', '侠气', '义气'], source: '王维《少年行》' },
+      { id: 5, title: '簪花少年', poem: '老夫聊发少年狂，左牵黄，右牵苍', annotation: '心态年轻、活力四射的人，永远有少年心', tags: ['锦帽', '豪迈', '少年感', '狂放', '活力'], source: '苏轼《江城子·密州出猎》' },
+      { id: 6, title: '仗剑侠客', poem: '事了拂衣去，深藏身与名', annotation: '低调务实的高手，做完事不留名，深藏不露', tags: ['劲装', '冷峻', '侠气', '低调', '干练'], source: '李白《侠客行》' },
+      { id: 7, title: '铁血将军', poem: '黄沙百战穿金甲，不破楼兰终不还', annotation: '意志坚定、战斗力爆表的硬核人物', tags: ['金甲', '豪迈', '霸气', '铁血', '坚定'], source: '王昌龄《从军行》' },
+      { id: 8, title: '江湖醉客', poem: '黄金白璧买歌笑，一醉累月轻王侯', annotation: '爱喝酒的豪爽人，今朝有酒今朝醉', tags: ['布衣', '潇洒', '豪迈', '狂放', '不羁'], source: '李白《忆旧游寄谯郡元参军》' },
+      { id: 9, title: '塞外 warrior', poem: '葡萄美酒夜光杯，欲饮琵琶马上催', annotation: '豪爽干脆的行动派，做事雷厉风行', tags: ['戎装', '豪迈', '果敢', '粗犷', '豪放'], source: '王翰《凉州词》' },
+      { id: 10, title: '独行剑客', poem: '十步杀一人，千里不留行', annotation: '能力超强的独行侠，不靠团队靠自己', tags: ['玄衣', '冷峻', '侠气', '孤傲', '凌厉'], source: '李白《侠客行》' },
+      { id: 11, title: '红袖佳人', poem: '巧笑倩兮，美目盼兮', annotation: '笑容迷人、眼睛会说话的美人', tags: ['红衣', '温润', '柔美', '典雅', '灵动'], source: '《诗经·卫风·硕人》' },
+      { id: 12, title: '霓裳仙子', poem: '云想衣裳花想容，春风拂槛露华浓', annotation: '颜值担当、气质出众，穿什么都好看', tags: ['霓裳', '仙气', '柔美', '典雅', '高贵'], source: '李白《清平调》' },
+      { id: 13, title: '巾帼女将', poem: '万里赴戎机，关山度若飞', annotation: '飒爽英姿的女中豪杰，干练独立', tags: ['戎装', '豪迈', '飒爽', '独立', '果敢'], source: '《木兰诗》' },
+      { id: 14, title: '闺中秀女', poem: '和羞走，倚门回首，却把青梅嗅', annotation: '含蓄内敛、容易害羞的人，气质温婉', tags: ['素衣', '温润', '含蓄', '文静', '内敛'], source: '李清照《点绛唇》' },
+      { id: 15, title: '倾国妖姬', poem: '回眸一笑百媚生，六宫粉黛无颜色', annotation: '魅力值爆表、走到哪都是焦点的人物', tags: ['华服', '妩媚', '高贵', '明艳', '动人'], source: '白居易《长恨歌》' },
+      { id: 16, title: '山林隐士', poem: '采菊东篱下，悠然见南山', annotation: '佛系淡泊、不争不抢的世外高人', tags: ['素衣', '沉静', '仙气', '佛系', '淡泊'], source: '陶渊明《饮酒》' },
+      { id: 17, title: '垂钓老翁', poem: '孤舟蓑笠翁，独钓寒江雪', annotation: '耐得住寂寞、沉得住气的人，享受独处', tags: ['蓑衣', '沉静', '孤傲', '淡泊', '沉稳'], source: '柳宗元《江雪》' },
+      { id: 18, title: '竹林贤士', poem: '独坐幽篁里，弹琴复长啸', annotation: '有自己小世界的人，文艺且自得其乐', tags: ['青衫', '沉静', '文艺', '仙气', '雅致'], source: '王维《竹里馆》' },
+      { id: 19, title: '山中高士', poem: '松下问童子，言师采药去', annotation: '神龙见首不见尾的神秘人物，行踪不定', tags: ['素衣', '仙气', '神秘', '淡泊', '超然'], source: '贾岛《寻隐者不遇》' },
+      { id: 20, title: '诗圣词宗', poem: '笔落惊风雨，诗成泣鬼神', annotation: '才华横溢的大才子，文字功底一流', tags: ['青衫', '儒雅', '书卷气', '才华', '严谨'], source: '杜甫《寄李十二白二十韵》' },
+      { id: 21, title: '醉吟先生', poem: '此中有真意，欲辨已忘言', annotation: '喝酒后有哲理、爱说金句的哲人', tags: ['布衣', '潇洒', '文艺', '深邃', '通透'], source: '陶渊明《饮酒》' },
+      { id: 22, title: '癫狂画师', poem: '十日画一水，五日画一石', annotation: '做事极度专注、讲究细节的完美主义者', tags: ['彩衣', '狂放', '文艺', '执着', '匠心'], source: '杜甫《戏题王宰画山水图歌》' },
+      { id: 23, title: '抚琴雅士', poem: '为我一挥手，如听万壑松', annotation: '气质优雅、有品味的生活家', tags: ['白衣', '儒雅', '文艺', '雅致', '温润'], source: '李白《听蜀僧濬弹琴》' },
+      { id: 24, title: '锦衣玉食', poem: '兰陵美酒郁金香，玉碗盛来琥珀光', annotation: '讲究生活品质、出手大方的富贵人', tags: ['华服', '高贵', '贵气', '精致', '大方'], source: '李白《客中行》' },
+      { id: 25, title: '天潢贵胄', poem: '金樽清酒斗十千，玉盘珍羞直万钱', annotation: '气质高贵、自带贵族范儿的人物', tags: ['紫袍', '高贵', '贵气', '典雅', '气度'], source: '李白《行路难》' },
+      { id: 26, title: '云游高僧', poem: '竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生', annotation: '心态豁达、看透世事的通透之人', tags: ['僧衣', '沉静', '佛系', '通透', '豁达'], source: '苏轼《定风波》' },
+      { id: 27, title: '世外散人', poem: '我本楚狂人，凤歌笑孔丘', annotation: '不拘一格、我行我素的自由灵魂', tags: ['布衣', '潇洒', '狂放', '不羁', '自在'], source: '李白《庐山谣寄卢侍御虚舟》' },
+      { id: 28, title: '鬼斧神工', poem: '九秋风露越窑开，夺得千峰翠色来', annotation: '手艺出色的能工巧匠，动手能力极强', tags: ['短褐', '朴实', '匠心', '专注', '沉稳'], source: '陆龟蒙《秘色越器》' },
+      { id: 29, title: '市井奇人', poem: '长安市上酒家眠，天子呼来不上船', annotation: '有个性、不拘小节的奇人异士', tags: ['布衣', '潇洒', '狂放', '不羁', '有趣'], source: '杜甫《饮中八仙歌》' },
+      { id: 30, title: '千里归人', poem: '寒雨连江夜入吴，平明送客楚山孤', annotation: '重情重义、珍惜朋友的真性情之人', tags: ['青衫', '温润', '深情', '义气', '真挚'], source: '王昌龄《芙蓉楼送辛渐》' },
+      { id: 31, title: '白发狂客', poem: '少壮能几时，鬓发各已苍', annotation: '阅历丰富的老江湖，看尽世事沧桑', tags: ['布衣', '豪迈', '沧桑', '通透', '故事感'], source: '杜甫《赠卫八处士》' },
+      { id: 32, title: '翩翩佳公子', poem: '陌上谁家年少，足风流', annotation: '颜值与气质俱佳的型男/美女', tags: ['白衣', '少年感', '风流', '贵气', '玉树临风'], source: '韦庄《思帝乡》' },
+      { id: 33, title: '暗夜刺客', poem: '流星白羽腰间插，剑花秋莲光出匣', annotation: '行事低调、出手迅速的效率达人', tags: ['玄衣', '冷峻', '神秘', '凌厉', '敏捷'], source: '李白《胡无人》' },
+      { id: 34, title: '孤鸿影', poem: '谁见幽人独往来，缥缈孤鸿影', annotation: '喜欢独来独往、享受孤独的独行侠', tags: ['素衣', '沉静', '孤傲', '神秘', '清冷'], source: '苏轼《卜算子·黄州定慧院寓居作》' },
+      { id: 35, title: '簪花仕女', poem: '鬓云欲度香腮雪', annotation: '精致讲究的时尚达人，妆容永远在线', tags: ['华服', '柔美', '精致', '明艳', '时尚'], source: '温庭筠《菩萨蛮》' },
+      { id: 36, title: '戎装哨卫', poem: '更吹羌笛关山月，无那金闺万里愁', annotation: '坚守岗位、责任感爆棚的靠谱人士', tags: ['戎装', '沉稳', '坚韧', '忠诚', '肃穆'], source: '王昌龄《从军行》' },
+      { id: 37, title: '琴心剑胆', poem: '一身转战三千里，一剑曾当百万师', annotation: '文武双全的多面手，能文能武', tags: ['劲装', '豪迈', '侠气', '才华', '全能'], source: '王维《老将行》' },
+      { id: 38, title: '凌波微步', poem: '体迅飞凫，飘忽若神，凌波微步，罗袜生尘', annotation: '身姿轻盈灵活、行动敏捷的人', tags: ['素衣', '灵动', '仙气', '柔美', '飘逸'], source: '曹植《洛神赋》' },
+      { id: 39, title: '踏雪寻梅', poem: '折梅逢驿使，寄与陇头人', annotation: '有生活情趣、懂得浪漫的细心人', tags: ['红衣', '文艺', '雅致', '浪漫', '温情'], source: '陆凯《赠范晔》' },
+      { id: 40, title: '琼楼玉宇', poem: '高处不胜寒', annotation: '高冷范儿、生人勿近的人物，但内心细腻', tags: ['华服', '冷峻', '高贵', '孤傲', '清冷'], source: '苏轼《水调歌头》' },
+      { id: 41, title: '不羁浪子', poem: '人生得意须尽欢，莫使金樽空对月', annotation: '及时行乐的享乐主义者，活在当下', tags: ['布衣', '潇洒', '豪迈', '不羁', '乐观'], source: '李白《将进酒》' },
+      { id: 42, title: '夜行衣客', poem: '月黑雁飞高，单于夜遁逃', annotation: '白天低调晚上活跃的夜猫子型', tags: ['玄衣', '神秘', '低调', '敏捷', '孤傲'], source: '卢纶《塞下曲》' },
+      { id: 43, title: '翠袖佳人', poem: '绿杨烟外晓寒轻，红杏枝头春意闹', annotation: '充满生机和活力、像春天一样的人', tags: ['翠衣', '灵动', '柔美', '活泼', '明媚'], source: '宋祁《玉楼春》' },
+      { id: 44, title: '青衫司马', poem: '座中泣下谁最多？江州司马青衫湿', annotation: '共情能力强、情感丰富的感性之人', tags: ['青衫', '温润', '深情', '感性', '真挚'], source: '白居易《琵琶行》' },
+      { id: 45, title: '铁面判官', poem: '尔曹身与名俱灭，不废江河万古流', annotation: '说话犀利直接、一针见血的毒舌担当', tags: ['皂衣', '冷峻', '凌厉', '威严', '犀利'], source: '杜甫《戏为六绝句》' },
+      { id: 46, title: '软语娇娘', poem: '醉里吴音相媚好，白发谁家翁媪', annotation: '说话温柔好听、让人如沐春风', tags: ['素衣', '温润', '柔美', '温情', '可爱'], source: '辛弃疾《清平乐·村居》' },
+      { id: 47, title: '草鞋樵夫', poem: '樵夫下山来，担柴带云归', annotation: '勤劳朴实的实干派，脚踏实地', tags: ['短褐', '朴实', '烟火气', '勤劳', '踏实'], source: '民间古谚' },
+      { id: 48, title: '竹篓采药', poem: '采药白云深处，逍遥山水之间', annotation: '热爱大自然、喜欢户外活动的人', tags: ['短褐', '仙气', '淡泊', '自在', '自然'], source: '民间古谚' },
+      { id: 49, title: '金簪贵妇', poem: '翠翘金雀玉搔头', annotation: '气场强大的御姐/女王范', tags: ['华服', '高贵', '贵气', '典雅', '气场'], source: '白居易《长恨歌》' },
+      { id: 50, title: '踏青游女', poem: '梨花风起正清明，游子寻春半出城', annotation: '爱玩爱笑、喜欢热闹的社交达人', tags: ['彩衣', '灵动', '活泼', '明媚', '热情'], source: '吴惟信《苏堤清明即事》' },
+      { id: 51, title: '雪夜归客', poem: '柴门闻犬吠，风雪夜归人', annotation: '总是在关键时刻出现的人，靠谱', tags: ['蓑衣', '温润', '温情', '真挚', '可靠'], source: '刘长卿《逢雪宿芙蓉山主人》' },
+      { id: 52, title: '白玉书生', poem: '洛阳亲友如相问，一片冰心在玉壶', annotation: '心地纯洁、为人真诚正直', tags: ['白衣', '温润', '儒雅', '真挚', '冰清'], source: '王昌龄《芙蓉楼送辛渐》' },
+      { id: 53, title: '刀笔吏', poem: '文章千古事，得失寸心知', annotation: '做事严谨、追求完美的细节控', tags: ['皂衣', '儒雅', '沉稳', '严谨', '匠心'], source: '杜甫《偶题》' },
+      { id: 54, title: '碧玉小家', poem: '碧玉小家女，不敢攀贵德', annotation: '低调谦虚、不争不抢的佛系人物', tags: ['素衣', '朴实', '含蓄', '温婉', '淡泊'], source: '《碧玉歌》' },
+      { id: 55, title: '紫衣侯', poem: '紫袍新秘监，白首旧书生', annotation: '有身份有地位但不摆架子的朋友', tags: ['紫袍', '高贵', '儒雅', '亲和', '气度'], source: '白居易《初授秘监并赐金紫》' },
+      { id: 56, title: '黄衫客', poem: '黄衫年少来宜数，不见堂前东逝波', annotation: '阳光开朗的大男孩/大女孩', tags: ['黄衫', '少年感', '活泼', '阳光', '热情'], source: '杜甫《少年行》' },
+      { id: 57, title: '抚扇谋士', poem: '羽扇纶巾，谈笑间，樯橹灰飞烟灭', annotation: '头脑聪明的智多星，善于出谋划策', tags: ['白衣', '儒雅', '书卷气', '沉稳', '睿智'], source: '苏轼《念奴娇·赤壁怀古》' },
+      { id: 58, title: '舞剑姬', poem: '昔有佳人公孙氏，一舞剑器动四方', annotation: '多才多艺、身怀绝技的才艺达人', tags: ['红衣', '飒爽', '灵动', '才华', '明艳'], source: '杜甫《观公孙大娘弟子舞剑器行》' },
+      { id: 59, title: '夜读人', poem: '三更灯火五更鸡，正是男儿读书时', annotation: '勤奋刻苦、默默努力的奋斗者', tags: ['青衫', '沉静', '专注', '勤奋', '执着'], source: '颜真卿《劝学》' },
+      { id: 60, title: '锦瑟佳人', poem: '锦瑟无端五十弦，一弦一柱思华年', annotation: '怀旧深情、有故事有内涵的人', tags: ['华服', '温润', '深情', '文艺', '典雅'], source: '李商隐《锦瑟》' },
+      { id: 61, title: '铁骨硬汉', poem: '千磨万击还坚劲，任尔东西南北风', annotation: '意志坚定、百折不挠的硬骨头', tags: ['劲装', '豪迈', '坚韧', '沉稳', '刚毅'], source: '郑燮《竹石》' },
+      { id: 62, title: '含笑花仙', poem: '唯有牡丹真国色，花开时节动京城', annotation: '气场强大、出场自带BGM的人', tags: ['华服', '华贵', '明艳', '高贵', '自信'], source: '刘禹锡《赏牡丹》' },
+      { id: 63, title: '折柳送别', poem: '渭城朝雨浥轻尘，客舍青青柳色新', annotation: '重感情、在乎仪式感的温暖之人', tags: ['素衣', '温润', '深情', '真挚', '温情'], source: '王维《送元二使安西》' },
+      { id: 64, title: '解语花', poem: '解释春风无限恨，沉香亭北倚阑干', annotation: '善解人意、会照顾人的知心朋友', tags: ['霓裳', '温润', '柔美', '温情', '善解人意'], source: '李白《清平调》' },
+      { id: 65, title: '长歌行者', poem: '前不见古人，后不见来者', annotation: '格局宏大、有超前思维的 visionary', tags: ['布衣', '孤傲', '深邃', '通透', '超然'], source: '陈子昂《登幽州台歌》' },
+      { id: 66, title: '醉卧沙场', poem: '醉卧沙场君莫笑，古来征战几人回', annotation: '豁达乐观、玩笑人生的气氛组', tags: ['戎装', '豪迈', '狂放', '乐观', '洒脱'], source: '王翰《凉州词》' },
+      { id: 67, title: '素衣茶人', poem: '矮纸斜行闲作草，晴窗细乳戏分茶', annotation: '慢生活、懂享受的品味之人', tags: ['素衣', '温润', '雅致', '静气', '品味'], source: '陆游《临安春雨初霁》' },
+      { id: 68, title: '仙风道骨', poem: '飘飘乎如遗世独立，羽化而登仙', annotation: '气质超然、不食人间烟火的仙人范', tags: ['白衣', '仙气', '超然', '飘逸', '孤傲'], source: '苏轼《赤壁赋》' },
+      { id: 69, title: '烈火烹油', poem: '烹羊宰牛且为乐，会须一饮三百杯', annotation: '热情好客、喜欢张罗局面的组织者', tags: ['锦衣', '豪迈', '热情', '奔放', '大方'], source: '李白《将进酒》' },
+      { id: 70, title: '静水深流', poem: '问渠那得清如许？为有源头活水来', annotation: '表面平静内心丰富、不断学习进取', tags: ['青衫', '沉静', '儒雅', '深邃', '睿智'], source: '朱熹《观书有感》' },
+      { id: 71, title: '把酒问天', poem: '明月几时有？把酒问青天', annotation: '爱思考哲学问题的深度思考者', tags: ['白衣', '豪迈', '深邃', '通透', '浪漫'], source: '苏轼《水调歌头》' },
+      { id: 72, title: '胭脂绯红', poem: '去年今日此门中，人面桃花相映红', annotation: '让人一见难忘、印象深刻的人', tags: ['红衣', '柔美', '明艳', '温婉', '动人'], source: '崔护《题都城南庄》' },
+      { id: 73, title: '傲雪寒梅', poem: '宝剑锋从磨砺出，梅花香自苦寒来', annotation: '历经磨难依然坚强的奋斗者', tags: ['素衣', '冷峻', '坚韧', '孤傲', '执着'], source: '《警世贤文》' },
+      { id: 74, title: '春风满面', poem: '春风得意马蹄疾，一日看尽长安花', annotation: '最近有好事、心情大好的幸运儿', tags: ['锦衣', '少年感', '乐观', '活力', '明媚'], source: '孟郊《登科后》' },
+      { id: 75, title: '红叶题诗', poem: '流水何太急，深宫尽日闲', annotation: '浪漫含蓄、有诗意的文青', tags: ['素衣', '文艺', '浪漫', '含蓄', '典雅'], source: '韩氏《题红叶》' },
+      { id: 76, title: '沧海遗珠', poem: '沧海月明珠有泪，蓝田日暖玉生烟', annotation: '被低估的宝藏人物，身怀绝技却不张扬', tags: ['素衣', '温润', '神秘', '内敛', '才华'], source: '李商隐《锦瑟》' },
+      { id: 77, title: '大漠孤烟', poem: '大漠孤烟直，长河落日圆', annotation: '性格直爽、心胸开阔的坦荡之人', tags: ['戎装', '豪迈', '直爽', '豁达', '沉稳'], source: '王维《使至塞上》' },
+      { id: 78, title: '渔舟唱晚', poem: '落霞与孤鹜齐飞，秋水共长天一色', annotation: '热爱生活、懂得欣赏美景的有心人', tags: ['布衣', '沉静', '文艺', '浪漫', '雅致'], source: '王勃《滕王阁序》' },
+      { id: 79, title: '貂蝉拜月', poem: '闭月羞花之貌，沉鱼落雁之容', annotation: '颜值担当、美貌出众的焦点人物', tags: ['华服', '柔美', '高贵', '明艳', '动人'], source: '《三国演义》' },
+      { id: 80, title: '温酒斩将', poem: '云长停盏施英勇，酒尚温时斩华雄', annotation: '工作效率极高、又快又好的牛人', tags: ['金甲', '豪迈', '果敢', '凌厉', '霸气'], source: '《三国演义》' },
+      { id: 81, title: '青梅煮酒', poem: '天下英雄谁敌手？曹刘', annotation: '有野心有抱负、不甘平庸的上进者', tags: ['华服', '豪迈', '霸气', '自信', '睿智'], source: '辛弃疾《南乡子》' },
+      { id: 82, title: '烟雨蓑衣', poem: '青箬笠，绿蓑衣，斜风细雨不须归', annotation: '随遇而安、享受当下的乐天派', tags: ['蓑衣', '洒脱', '淡泊', '自在', '乐观'], source: '张志和《渔歌子》' },
+      { id: 83, title: '霓裳羽衣', poem: '渔阳鼙鼓动地来，惊破霓裳羽衣曲', annotation: '优雅从容、突然被打断也会保持风度', tags: ['霓裳', '典雅', '高贵', '从容', '内敛'], source: '白居易《长恨歌》' },
+      { id: 84, title: '画龙点睛', poem: '丹青不知老将至，富贵于我如浮云', annotation: '追求极致、不为名利所动的艺术家', tags: ['彩衣', '文艺', '执着', '匠心', '超然'], source: '杜甫《丹青引赠曹将军霸》' },
+      { id: 85, title: '铁马冰河', poem: '夜阑卧听风吹雨，铁马冰河入梦来', annotation: '心系大事、格局宽广的有志之士', tags: ['戎装', '豪迈', '坚定', '热血', '执着'], source: '陆游《十一月四日风雨大作》' },
+      { id: 86, title: '梨花带雨', poem: '玉容寂寞泪阑干，梨花一枝春带雨', annotation: '情感丰富、哭起来也很好看的感性人', tags: ['素衣', '柔美', '深情', '温婉', '感性'], source: '白居易《长恨歌》' },
+      { id: 87, title: '金戈铁马', poem: '想当年，金戈铁马，气吞万里如虎', annotation: '昔日辉煌、有故事有经历的前辈', tags: ['金甲', '豪迈', '霸气', '沧桑', '热血'], source: '辛弃疾《永遇乐·京口北固亭怀古》' },
+      { id: 88, title: '明月入怀', poem: '我醉君复乐，陶然共忘机', annotation: '相处起来让人舒服、放松的朋友', tags: ['白衣', '温润', '洒脱', '亲和', '豁达'], source: '李白《下终南山过斛斯山人宿置酒》' },
+      { id: 89, title: '珠帘半卷', poem: '却下水晶帘，玲珑望秋月', annotation: '有神秘感、让人想深入了解的人物', tags: ['华服', '神秘', '典雅', '含蓄', '高贵'], source: '李白《玉阶怨》' },
+      { id: 90, title: '黄粱一梦', poem: '人生如梦，一尊还酹江月', annotation: '看破红尘、活得通透的哲学家', tags: ['布衣', '沉静', '深邃', '通透', '淡泊'], source: '苏轼《念奴娇·赤壁怀古》' },
+      { id: 91, title: '金樽清酒', poem: '人生得意须尽欢，莫使金樽空对月', annotation: '气氛组的核心人物，最会带节奏', tags: ['华服', '豪迈', '热情', '洒脱', '大方'], source: '李白《将进酒》' },
+      { id: 92, title: '青灯古佛', poem: '曲径通幽处，禅房花木深', annotation: '内心平静、追求精神世界的人', tags: ['僧衣', '沉静', '佛系', '深邃', '淡泊'], source: '常建《题破山寺后禅院》' },
+      { id: 93, title: '一蓑烟雨', poem: '莫听穿林打叶声，何妨吟啸且徐行', annotation: '淡定从容、遇到什么事都不慌的人', tags: ['蓑衣', '洒脱', '豁达', '沉稳', '从容'], source: '苏轼《定风波》' },
+      { id: 94, title: '绣口锦心', poem: '绣口一吐，就半个盛唐', annotation: '能说会道、口才极佳的演说家', tags: ['锦衣', '潇洒', '豪迈', '自信', '才华'], source: '余光中《寻李白》' },
+      { id: 95, title: '琥珀光', poem: '兰陵美酒郁金香，玉碗盛来琥珀光', annotation: '容光焕发、气色好到发光的人', tags: ['华服', '明艳', '贵气', '健康', '自信'], source: '李白《客中行》' },
+      { id: 96, title: '醉里挑灯', poem: '醉里挑灯看剑，梦回吹角连营', annotation: '心中有热血、有梦想的行动派', tags: ['劲装', '豪迈', '热血', '执着', '坚毅'], source: '辛弃疾《破阵子》' },
+      { id: 97, title: '长安倦客', poem: '冠盖满京华，斯人独憔悴', annotation: '在都市打拼的疲惫打工人，需要放松', tags: ['青衫', '沉静', '沧桑', '故事感', '内敛'], source: '杜甫《梦李白》' },
+      { id: 98, title: '锦城丝管', poem: '锦城丝管日纷纷，半入江风半入云', annotation: '热爱音乐/艺术、有高雅品味的人', tags: ['华服', '文艺', '雅致', '浪漫', '热情'], source: '杜甫《赠花卿》' },
+      { id: 99, title: '云中锦书', poem: '云中谁寄锦书来，雁字回时，月满西楼', annotation: '重情重义、牵挂朋友的有心人', tags: ['素衣', '温润', '深情', '真挚', '温情'], source: '李清照《一剪梅》' },
+      { id: 100, title: '把酒言欢', poem: '桃李春风一杯酒，江湖夜雨十年灯', annotation: '老朋友相聚最开心的那个人', tags: ['布衣', '豪迈', '潇洒', '深情', '义气'], source: '黄庭坚《寄黄几复》' },
+      { id: 101, title: '紫陌红尘', poem: '紫陌红尘拂面来，无人不道看花回', annotation: '紧跟潮流、走在时尚前沿的人', tags: ['华服', '明艳', '时尚', '活力', '自信'], source: '刘禹锡《元和十年自郎州至京戏赠看花诸君子》' },
+      { id: 102, title: '西窗共剪', poem: '何当共剪西窗烛，却话巴山夜雨时', annotation: '期待团聚、重视家庭温情的人', tags: ['青衫', '温润', '深情', '浪漫', '真挚'], source: '李商隐《夜雨寄北》' },
+      { id: 103, title: '竹杖芒鞋', poem: '竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生', annotation: '心态年轻、行动力强的活力派', tags: ['布衣', '洒脱', '豁达', '乐观', '从容'], source: '苏轼《定风波》' },
+      { id: 104, title: '提壶问酒', poem: '借问酒家何处有？牧童遥指杏花村', annotation: '随性而为、说走就走的行动派', tags: ['布衣', '洒脱', '热情', '活泼', '自在'], source: '杜牧《清明》' },
+      { id: 105, title: '大笑出门', poem: '仰天大笑出门去，我辈岂是蓬蒿人', annotation: '自信张扬、不惧他人眼光的人', tags: ['白衣', '潇洒', '狂放', '自信', '豪迈'], source: '李白《南陵别儿童入京》' },
+    ];
+
+    const chouData = [
+      { id: 1, title: '满饮此杯', instruction: '满饮此杯，一滴不留', type: '自饮' },
+      { id: 2, title: '自斟半杯', instruction: '自斟半杯，徐徐饮之', type: '自饮' },
+      { id: 3, title: '三杯为敬', instruction: '连饮三杯，以示豪情', type: '自饮' },
+      { id: 4, title: '一口闷', instruction: '一口闷，展现你的豪爽', type: '自饮' },
+      { id: 5, title: '小酌一口', instruction: '轻抿一口，意思意思', type: '自饮' },
+      { id: 6, title: '深杯浅酌', instruction: '斟满一杯，但只喝一半', type: '自饮' },
+      { id: 7, title: '慢饮细品', instruction: '慢慢喝，一分钟后才能放下杯子', type: '自饮' },
+      { id: 8, title: '双杯连饮', instruction: '左右手各执一杯，先后饮尽', type: '自饮' },
+      { id: 9, title: '三巡酒', instruction: '分三口饮完这杯酒', type: '自饮' },
+      { id: 10, title: '回敬', instruction: '自饮一杯，回敬天地', type: '自饮' },
+      { id: 11, title: '敬长者', instruction: '敬在场最年长者一杯', type: '敬人' },
+      { id: 12, title: '敬少者', instruction: '敬在场最年少者一杯', type: '敬人' },
+      { id: 13, title: '敬左邻', instruction: '敬你左边的人一杯', type: '敬人' },
+      { id: 14, title: '敬右舍', instruction: '敬你右边的人一杯', type: '敬人' },
+      { id: 15, title: '敬对座', instruction: '敬你对面的朋友一杯', type: '敬人' },
+      { id: 16, title: '敬故人', instruction: '敬你认识最久的那位朋友一杯', type: '敬人' },
+      { id: 17, title: '敬新友', instruction: '敬你今天刚认识的朋友一杯', type: '敬人' },
+      { id: 18, title: '敬贵人', instruction: '选一位你想感谢的人，敬他一杯', type: '敬人' },
+      { id: 19, title: '谢师恩', instruction: '敬你认为最有智慧的人一杯', type: '敬人' },
+      { id: 20, title: '敬红颜/蓝颜', instruction: '敬在场你最欣赏的异性一杯', type: '敬人' },
+      { id: 21, title: '敬同袍', instruction: '敬和你穿同色系衣服的人一杯', type: '敬人' },
+      { id: 22, title: '敬本家', instruction: '敬同姓之人一杯（如有）', type: '敬人' },
+      { id: 23, title: '交杯共饮', instruction: '选友人一名，交杯共饮', type: '交杯' },
+      { id: 24, title: '双臂交杯', instruction: '与左右邻座两人一起，三人交杯共饮', type: '交杯' },
+      { id: 25, title: '同心酒', instruction: '与对面之人同饮一杯，心意相通', type: '交杯' },
+      { id: 26, title: '连环交杯', instruction: '你敬A，A敬B，B敬你，三人连环交杯', type: '交杯' },
+      { id: 27, title: '姻缘酒', instruction: '选一位与你相距最远的人交杯', type: '交杯' },
+      { id: 28, title: '斟酒一杯', instruction: '给在场指定人斟酒一杯，并看他喝完', type: '指定' },
+      { id: 29, title: '代饮', instruction: '指定一人代你喝这杯酒', type: '指定' },
+      { id: 30, title: '添酒', instruction: '给全桌所有人斟满一杯', type: '指定' },
+      { id: 31, title: '换杯', instruction: '与任意一人交换杯子，喝对方的酒', type: '指定' },
+      { id: 32, title: '指点江山', instruction: '指定在场一人，让他喝双倍', type: '指定' },
+      { id: 33, title: '左三右三', instruction: '左边第三人和右边第三人各饮一杯', type: '隔座' },
+      { id: 34, title: '跳一跳', instruction: '隔一个人敬一个人，即每隔一人喝一杯', type: '隔座' },
+      { id: 35, title: '隔山打牛', instruction: '你对面的人隔两个人的人，那人喝一杯', type: '隔座' },
+      { id: 36, title: '传花令', instruction: '从你开始，依次向右传，喊停的人饮酒', type: '隔座' },
+      { id: 37, title: '遥遥相望', instruction: '与坐在最角落的那位朋友共饮一杯', type: '隔座' },
+      { id: 38, title: '转圈令', instruction: '从你数起，顺时针第七个人饮酒', type: '隔座' },
+      { id: 39, title: '共饮', instruction: '全场共同举杯，齐饮此杯', type: '全桌' },
+      { id: 40, title: '轮饮', instruction: '从你开始，顺时针每人喝一小口，轮完一圈', type: '全桌' },
+      { id: 41, title: '满堂红', instruction: '全场所有人一起干杯', type: '全桌' },
+      { id: 42, title: '酒过三巡', instruction: '全桌每人连饮三小口', type: '全桌' },
+      { id: 43, title: '罚诗', instruction: '即兴吟诗一句，或说一句带"酒"字的诗词，吟不出则饮一杯', type: '趣味' },
+      { id: 44, title: '行酒令', instruction: '说一个成语，下一个人用最后一个字接龙，接不上则饮', type: '趣味' },
+      { id: 45, title: '比手画脚', instruction: '比划一个词让全桌猜，猜不出你喝，猜出大家一起喝', type: '趣味' },
+      { id: 46, title: '真假难辨', instruction: '说三件事，两真一假，全桌猜哪个是假的，猜错的人喝酒', type: '趣味' },
+      { id: 47, title: '故事会', instruction: '讲一个自己最丢人的故事，全桌听完大笑后共饮一杯', type: '趣味' },
+      { id: 48, title: '真心话', instruction: '回答全桌任意一人一个问题，或饮一杯', type: '趣味' },
+      { id: 49, title: '大冒险', instruction: '完成全桌指定的一件小事（例如学一声猫叫），或饮一杯', type: '趣味' },
+      { id: 50, title: '击鼓传花', instruction: '闭眼喊停，球在谁手上谁饮一杯', type: '趣味' },
+      { id: 51, title: '拇指游戏', instruction: '你举杯时伸出拇指，全桌需跟着伸，最后一个伸的喝酒', type: '趣味' },
+      { id: 52, title: '对暗号', instruction: '说一句诗，你需要接下一句，接不出则饮', type: '趣味' },
+      { id: 53, title: '绕口令', instruction: '念一段绕口令，念错一个字饮半杯', type: '趣味' },
+      { id: 54, title: '猜拳', instruction: '与右手边的人猜拳，输的人饮一杯', type: '趣味' },
+      { id: 55, title: '数字炸弹', instruction: '在心里想一个1-100的数字，全桌轮流猜，猜中的人饮酒', type: '趣味' },
+      { id: 56, title: '模仿秀', instruction: '模仿在场一个人，全桌猜是谁，猜不出你饮酒', type: '趣味' },
+      { id: 57, title: '迟到罚', instruction: '自认是今天到得最晚的人，饮一杯', type: '罚酒' },
+      { id: 58, title: '手机罚', instruction: '最后一名摸手机的人，饮一杯', type: '罚酒' },
+      { id: 59, title: '说话罚', instruction: '上一轮说话最多的人，饮一杯', type: '罚酒' },
+      { id: 60, title: '笑场罚', instruction: '全场笑得最大声的人，饮一杯', type: '罚酒' },
+      { id: 61, title: '借口罚', instruction: '找借口不喝酒的人，请自觉饮一杯', type: '罚酒' },
+      { id: 62, title: '剩酒罚', instruction: '杯子里剩酒最多的人，饮一杯', type: '罚酒' },
+      { id: 63, title: '移花接木', instruction: '把自己的酒换给左边的人喝', type: '组合' },
+      { id: 64, title: '借花献佛', instruction: '用别人的酒敬另一个人', type: '组合' },
+      { id: 65, title: '混酿大师', instruction: '将自己杯子里的酒分一半给别人', type: '组合' },
+      { id: 66, title: '三连敬', instruction: '连敬三位不同的人，每敬一杯自己陪半杯', type: '组合' },
+      { id: 67, title: '七步成诗', instruction: '走七步内吟诗一句，吟不出则饮一杯', type: '组合' },
+      { id: 68, title: '杯中乾坤', instruction: '将自己杯中的酒分给在场所有人（每人一滴即可）', type: '组合' },
+      { id: 69, title: '翻倍令', instruction: '本局所有饮酒量翻倍', type: '组合' },
+      { id: 70, title: '减半令', instruction: '本局所有饮酒量减半', type: '组合' },
+      { id: 71, title: '沉默是金', instruction: '从现在起你不能再说话，说一个字饮半杯，直到下一轮', type: '组合' },
+      { id: 72, title: '以茶代酒', instruction: '你被特许以茶代酒喝一杯（但表情必须像在喝真酒）', type: '组合' },
+      { id: 73, title: '杯中酒', instruction: '把你杯中的酒喝到只剩一滴', type: '自饮' },
+      { id: 74, title: '酒中仙', instruction: '闭眼饮酒，睁眼时杯中必须已空', type: '自饮' },
+      { id: 75, title: '冰川饮', instruction: '酒含在口中10秒后才能咽下', type: '自饮' },
+      { id: 76, title: '三步饮', instruction: '走三步，每一步喝一口，三步喝完', type: '自饮' },
+      { id: 77, title: '转杯', instruction: '旋转杯子，杯口朝向谁谁喝一杯', type: '趣味' },
+      { id: 78, title: '举杯邀月', instruction: '举杯敬窗外明月，自饮一杯', type: '自饮' },
+      { id: 79, title: '对影成三人', instruction: '连饮三杯：一杯敬自己，一杯敬影子，一杯敬月亮', type: '自饮' },
+      { id: 80, title: '推杯换盏', instruction: '与你左右两边的人各碰一次杯，然后共饮', type: '交杯' },
+      { id: 81, title: '酒逢知己', instruction: '选一位与你有共同爱好的人，碰杯共饮', type: '敬人' },
+      { id: 82, title: '高山流水', instruction: '敬一位你佩服的人，表达敬意', type: '敬人' },
+      { id: 83, title: '负荆请罪', instruction: '如果有之前不小心得罪过的人，敬他一杯和解', type: '敬人' },
+      { id: 84, title: '投桃报李', instruction: '之前谁敬过你，你现在回敬他', type: '敬人' },
+      { id: 85, title: '十八里相送', instruction: '与左边的人交杯喝完，再与右边的人交杯喝完', type: '交杯' },
+      { id: 86, title: '众人皆醉', instruction: '全场每人喝一杯，你不喝（享受特权）', type: '全桌' },
+      { id: 87, title: '独醒', instruction: '全场只有你喝一杯，其他人看着', type: '自饮' },
+      { id: 88, title: '金兰之契', instruction: '你与同桌另一位结为"酒兄弟"，以后互敬互饮', type: '趣味' },
+      { id: 89, title: '妙语连珠', instruction: '连续说五个带"一"字的成语，说不上来饮酒', type: '趣味' },
+      { id: 90, title: '福星高照', instruction: '抽到这张卡免饮一杯，并获得指定一人代你饮一杯的权力', type: '趣味' },
+      { id: 91, title: '倒霉蛋', instruction: '不仅你自己要喝，还要陪你对饮的人多喝半杯', type: '组合' },
+      { id: 92, title: '左右逢源', instruction: '左边的人敬你一杯，你再敬右边的人一杯', type: '组合' },
+      { id: 93, title: '三阳开泰', instruction: '选靠近的三个人，每人喝一小口', type: '组合' },
+      { id: 94, title: '四季平安', instruction: '分四口喝完这杯酒，每口间隔5秒', type: '自饮' },
+      { id: 95, title: '五福临门', instruction: '与五个不同的人各碰一次杯', type: '组合' },
+      { id: 96, title: '六六大顺', instruction: '敬你最顺眼的人一杯', type: '敬人' },
+      { id: 97, title: '七星高照', instruction: '起身敬七位方向（东、南、西、北、上、下、中）各喝一小口', type: '自饮' },
+      { id: 98, title: '八仙过海', instruction: '每人用一种独特的方式喝酒（8种不同姿势），无法完成的人喝', type: '趣味' },
+      { id: 99, title: '长长久久', instruction: '与一位朋友久久对视，然后共饮一杯', type: '交杯' },
+      { id: 100, title: '十全十美', instruction: '喝完后说一句祝福在场所有人的话', type: '自饮' },
+      { id: 101, title: '百事顺遂', instruction: '喝之前说一件你最近最顺心的事，然后饮此杯', type: '自饮' },
+      { id: 102, title: '千杯不醉', instruction: '这杯酒分十小口喝，每口间隔至少10秒', type: '自饮' },
+      { id: 103, title: '少年游', instruction: '敬你最怀念的少年时光一杯，然后饮尽', type: '自饮' },
+      { id: 104, title: '忆江南', instruction: '说一句描写江南的诗词，说不出则饮', type: '趣味' },
+      { id: 105, title: '塞上曲', instruction: '说一句描写边塞的诗词，说不出则饮', type: '趣味' },
+    ];
+
+    function startGame() {
+      state.screen = 'gong-draw';
+      state.usedGongIds = [];
+      state.usedChouIds = [];
+      state.history = [];
+      renderGongDraw();
+    }
+
+    function renderGongDraw() {
+      const app = document.getElementById('app');
+      // 如果是第1轮且没有历史，显示漂亮的开场
+      const showOpening = state.history.length === 0;
+      
+      app.innerHTML = `
+        <div class="screen game-screen">
+          ${showOpening ? `
+            <div class="title-block" style="margin-bottom: 2rem;">
+              <h1 class="game-title">曲水流觞</h1>
+              <p class="subtitle">古风酒局 · 觥筹交错</p>
+            </div>
+          ` : ''}
+          <div class="game-header">
+            <span class="round-info">第 ${state.history.length + 1} 轮</span>
+          </div>
+          <div class="card-section">
+            <div class="phase-label">第一步 · 抽觥</div>
+            <div class="card-back gong-back" onclick="drawGong()">
+              <div class="card-back-inner">
+                <span class="card-char">觥</span>
+                <span class="card-sub">点击抽取人物</span>
+              </div>
+            </div>
+          </div>
+          <div class="game-footer">
+            <button onclick="showHistory()" class="btn-text">历轮回顾</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawGong() {
+      const available = gongData.filter(g => !state.usedGongIds.includes(g.id));
+      const gong = available[Math.floor(Math.random() * available.length)];
+      state.usedGongIds.push(gong.id);
+      state.currentGong = gong;
+      state.screen = 'gong-result';
+      renderGongResult();
+    }
+
+    function renderGongResult() {
+      const app = document.getElementById('app');
+      const gong = state.currentGong;
+      const tagHtml = gong.tags.map(t => `<span class="tag">${t}</span>`).join('');
+      app.innerHTML = `
+        <div class="screen game-screen">
+          <div class="game-header">
+            <span class="round-info">第 ${state.history.length + 1} 轮</span>
+          </div>
+          <div class="card-section">
+            <div class="phase-label">✨ 抽得人物</div>
+            <div class="card gong-card">
+              <div class="card-seal">觥</div>
+              <div class="gong-title">${gong.title}</div>
+              <div class="gong-poem">${gong.poem}</div>
+              <div class="gong-annotation">${gong.annotation}</div>
+              <div class="gong-tags">${tagHtml}</div>
+              <div class="gong-source">—— ${gong.source}</div>
+            </div>
+            <div class="vote-prompt">📢 全桌投票：谁最符合此人物？口头表决即可</div>
+          </div>
+          <div class="game-footer">
+            <button onclick="proceedToChou()" class="btn-primary">已投票，抽筹！</button>
+            <button onclick="drawGong()" class="btn-text">重抽</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function proceedToChou() {
+      state.screen = 'chou-draw';
+      renderChouDraw();
+    }
+
+    function renderChouDraw() {
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div class="screen game-screen">
+          <div class="game-header">
+            <span class="round-info">第 ${state.history.length + 1} 轮</span>
+          </div>
+          <div class="card-section">
+            <div class="phase-label">第二步 · 抽筹</div>
+            <div class="card-back chou-back" onclick="drawChou()">
+              <div class="card-back-inner">
+                <span class="card-char">筹</span>
+                <span class="card-sub">点击抽取酒令</span>
+              </div>
+            </div>
+          </div>
+          <div class="game-footer">
+            <button onclick="showHistory()" class="btn-text">历轮回顾</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function drawChou() {
+      const available = chouData.filter(c => !state.usedChouIds.includes(c.id));
+      const chou = available[Math.floor(Math.random() * available.length)];
+      state.usedChouIds.push(chou.id);
+      state.currentChou = chou;
+      state.screen = 'chou-result';
+      renderChouResult();
+    }
+
+    function renderChouResult() {
+      const app = document.getElementById('app');
+      const chou = state.currentChou;
+      const typeLabels = {
+        '自饮': '🍶 自饮',
+        '敬人': '🥂 敬人',
+        '交杯': '🤝 交杯',
+        '指定': '👆 指定',
+        '隔座': '↔️ 隔座',
+        '全桌': '👥 全桌',
+        '趣味': '🎭 趣味',
+        '罚酒': '😅 罚酒',
+        '组合': '🎲 组合',
+      };
+      app.innerHTML = `
+        <div class="screen game-screen">
+          <div class="game-header">
+            <span class="round-info">第 ${state.history.length + 1} 轮</span>
+          </div>
+          <div class="card-section">
+            <div class="phase-label">✨ 抽得酒令</div>
+            <div class="card chou-card">
+              <div class="card-seal">筹</div>
+              <div class="chou-type">${typeLabels[chou.type] || chou.type}</div>
+              <div class="chou-title">${chou.title}</div>
+              <div class="chou-instruction">${chou.instruction}</div>
+            </div>
+            <div class="chou-execution-hint">🎯 由刚被投中的人物执行此酒令</div>
+          </div>
+          <div class="game-footer">
+            <button onclick="finishRound()" class="btn-primary">完成了！下一轮</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function finishRound() {
+      state.history.push({
+        round: state.history.length + 1,
+        gong: state.currentGong,
+        chou: state.currentChou
+      });
+      state.currentGong = null;
+      state.currentChou = null;
+      state.screen = 'gong-draw';
+      renderGongDraw();
+    }
+
+    function showHistory() {
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.id = 'historyOverlay';
+      overlay.innerHTML = `
+        <div class="overlay-content history-panel">
+          <h2>历轮回顾</h2>
+          <div class="history-list">
+            ${state.history.length === 0 ? '<p class="empty-history">尚无记录</p>' :
+              state.history.map(h => `
+                <div class="history-item">
+                  <div class="history-round">第 ${h.round} 轮</div>
+                  <div class="history-gong">觥：${h.gong.title}</div>
+                  <div class="history-chou">筹：${h.chou.title} — ${h.chou.instruction}</div>
+                </div>
+              `).join('')
+            }
+          </div>
+          <button onclick="closeHistory()" class="btn-text">关闭</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    function closeHistory() {
+      const overlay = document.getElementById('historyOverlay');
+      if (overlay) overlay.remove();
+    }
+
+    // 直接进入游戏，无需setup
+    renderGongDraw();
+  </script>
+</body>
+</html>
